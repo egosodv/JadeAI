@@ -4,7 +4,13 @@
 
 **AI 驱动的智能简历生成器**
 
-拖拽编辑、实时 AI 优化、20 套专业模板、多格式导出，轻松打造高质量简历。
+拖拽编辑、实时 AI 优化、50 套专业模板、多格式导出，轻松打造高质量简历。
+
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-61dafb)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6)](https://www.typescriptlang.org/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ed)](https://hub.docker.com/r/twwch/jadeai)
 
 [English](./README.md)
 
@@ -44,7 +50,7 @@
 
 - **拖拽编辑器** — 可视化拖拽排列简历模块与条目
 - **行内编辑** — 点击任意字段，直接在画布上编辑
-- **20 套专业模板** — 经典、现代、极简、创意、ATS 友好、时间线等多种风格
+- **50 套专业模板** — 经典、现代、极简、创意、ATS 友好、时间线、北欧风、瑞士风等多种风格
 - **主题定制** — 颜色、字体、间距、页边距实时预览调整
 - **撤销 / 重做** — 完整编辑历史（最多 50 步）
 - **自动保存** — 可配置保存间隔（0.3s–5s），支持手动保存
@@ -58,6 +64,7 @@
 - **求职信生成** — 基于简历和 JD 的 AI 定制求职信，可选语气（正式 / 友好 / 自信）
 - **语法与写作检查** — 检测弱动词、模糊描述和语法问题，返回质量评分
 - **多语言翻译** — 支持 10 种语言互译，保留专业术语原文
+- **灵活 AI 供应商** — 支持 OpenAI、Anthropic 及自定义 API 端点；用户在应用内自行配置密钥
 
 ### 导出与分享
 
@@ -89,7 +96,7 @@
 | 数据库 | Drizzle ORM (SQLite / PostgreSQL) |
 | 认证 | NextAuth.js v5 + FingerprintJS |
 | AI | Vercel AI SDK v6 + OpenAI / Anthropic |
-| PDF | Puppeteer Core + Chromium |
+| PDF | Puppeteer Core + @sparticuz/chromium |
 | 国际化 | next-intl |
 | 数据校验 | Zod v4 |
 
@@ -190,6 +197,21 @@ pnpm dev
 
 打开 [http://localhost:3000](http://localhost:3000)。
 
+## 环境变量
+
+| 变量 | 必填 | 默认值 | 说明 |
+|------|------|--------|------|
+| `AUTH_SECRET` | 是 | — | 会话加密密钥 |
+| `DB_TYPE` | 否 | `sqlite` | 数据库类型：`sqlite` 或 `postgresql` |
+| `DATABASE_URL` | PostgreSQL 时 | — | PostgreSQL 连接字符串 |
+| `SQLITE_PATH` | 否 | `./data/jade.db` | SQLite 数据库文件路径 |
+| `NEXT_PUBLIC_AUTH_ENABLED` | 否 | `false` | 启用 Google OAuth（`true`）或使用指纹模式（`false`） |
+| `GOOGLE_CLIENT_ID` | OAuth 时 | — | Google OAuth 客户端 ID |
+| `GOOGLE_CLIENT_SECRET` | OAuth 时 | — | Google OAuth 客户端密钥 |
+| `NEXT_PUBLIC_APP_NAME` | 否 | `JadeAI` | 应用显示名称 |
+| `NEXT_PUBLIC_APP_URL` | 否 | `http://localhost:3000` | 应用 URL |
+| `NEXT_PUBLIC_DEFAULT_LOCALE` | 否 | `zh` | 默认语言：`zh` 或 `en` |
+
 ## 常用命令
 
 | 命令 | 说明 |
@@ -217,25 +239,157 @@ src/
 │   │   ├── templates/          # 模板画廊
 │   │   └── share/[token]/      # 公开分享简历查看
 │   └── api/
-│       ├── ai/                 # AI 接口（聊天、生成、JD 分析、求职信、语法检查、翻译）
+│       ├── ai/                 # AI 接口
+│       │   ├── chat/           #   流式对话 + 工具调用
+│       │   ├── generate-resume/#   AI 生成简历
+│       │   ├── jd-analysis/    #   JD 匹配分析
+│       │   ├── grammar-check/  #   语法与写作检查
+│       │   ├── cover-letter/   #   求职信生成
+│       │   ├── translate/      #   简历翻译
+│       │   └── models/         #   可用 AI 模型列表
 │       ├── resume/             # 简历 CRUD、导出、解析、分享
+│       ├── share/              # 公开分享访问
+│       ├── user/               # 用户信息与设置
 │       └── auth/               # NextAuth 认证
 ├── components/
 │   ├── ui/                     # shadcn/ui 基础组件
 │   ├── editor/                 # 编辑器画布、区块、字段、弹窗
 │   ├── ai/                     # AI 对话面板与气泡
-│   ├── preview/templates/      # 20 套简历模板
+│   ├── preview/templates/      # 50 套简历模板
 │   ├── dashboard/              # 仪表盘卡片、网格、弹窗
 │   └── layout/                 # 头部、主题、语言切换
 ├── lib/
 │   ├── db/                     # Schema、仓库、迁移、适配器
 │   ├── auth/                   # 认证配置
 │   └── ai/                     # AI 提示词、工具、模型配置
-├── hooks/                      # 自定义 React Hooks
+├── hooks/                      # 自定义 React Hooks（7 个）
 ├── stores/                     # Zustand 状态仓库（简历、编辑器、设置、UI、引导）
 └── types/                      # TypeScript 类型定义
 ```
 
+## 模板列表
+
+JadeAI 内置 **50 套专业设计模板**，覆盖多种风格和行业需求：
+
+<details>
+<summary>查看全部 50 套模板</summary>
+
+| # | 模板 | # | 模板 | # | 模板 |
+|---|------|---|------|---|------|
+| 1 | Classic | 18 | Clean | 35 | Material |
+| 2 | Modern | 19 | Bold | 36 | Medical |
+| 3 | Minimal | 20 | Timeline | 37 | Luxe |
+| 4 | Professional | 21 | Nordic | 38 | Retro |
+| 5 | Two-Column | 22 | Gradient | 39 | Card |
+| 6 | ATS | 23 | Magazine | 40 | Rose |
+| 7 | Academic | 24 | Corporate | 41 | Teacher |
+| 8 | Creative | 25 | Consultant | 42 | Coder |
+| 9 | Elegant | 26 | Swiss | 43 | Zigzag |
+| 10 | Executive | 27 | Metro | 44 | Neon |
+| 11 | Developer | 28 | Architect | 45 | Scientist |
+| 12 | Designer | 29 | Japanese | 46 | Blocks |
+| 13 | Startup | 30 | Artistic | 47 | Ribbon |
+| 14 | Formal | 31 | Sidebar | 48 | Engineer |
+| 15 | Infographic | 32 | Finance | 49 | Watercolor |
+| 16 | Compact | 33 | Berlin | 50 | Mosaic |
+| 17 | Euro | 34 | Legal | | |
+
+</details>
+
+## API 参考
+
+<details>
+<summary>查看全部 API 端点</summary>
+
+### 简历
+
+| 方法 | 端点 | 说明 |
+|------|------|------|
+| `GET` | `/api/resume` | 获取当前用户的简历列表 |
+| `POST` | `/api/resume` | 创建新简历 |
+| `GET` | `/api/resume/[id]` | 获取简历详情（含所有模块） |
+| `PUT` | `/api/resume/[id]` | 更新简历元信息或模块 |
+| `DELETE` | `/api/resume/[id]` | 删除简历 |
+| `POST` | `/api/resume/[id]/duplicate` | 复制简历 |
+| `GET` | `/api/resume/[id]/export` | 导出简历（pdf、docx、html、txt、json） |
+| `POST` | `/api/resume/parse` | 解析上传的 PDF 或图片简历 |
+| `POST` | `/api/resume/[id]/share` | 创建分享链接 |
+| `GET` | `/api/resume/[id]/share` | 获取分享设置 |
+| `DELETE` | `/api/resume/[id]/share` | 取消分享 |
+
+### 分享
+
+| 方法 | 端点 | 说明 |
+|------|------|------|
+| `GET` | `/api/share/[token]` | 访问公开分享的简历 |
+
+### AI
+
+| 方法 | 端点 | 说明 |
+|------|------|------|
+| `POST` | `/api/ai/chat` | 流式 AI 对话（带简历上下文） |
+| `GET` | `/api/ai/chat/sessions` | 获取简历的对话会话列表 |
+| `POST` | `/api/ai/chat/sessions` | 创建新对话会话 |
+| `GET` | `/api/ai/chat/sessions/[id]` | 获取会话的分页消息 |
+| `DELETE` | `/api/ai/chat/sessions/[id]` | 删除对话会话 |
+| `POST` | `/api/ai/generate-resume` | AI 生成简历 |
+| `POST` | `/api/ai/jd-analysis` | JD 匹配分析 |
+| `POST` | `/api/ai/grammar-check` | 语法与写作检查 |
+| `POST` | `/api/ai/cover-letter` | 生成求职信 |
+| `POST` | `/api/ai/translate` | 翻译简历内容 |
+| `GET` | `/api/ai/models` | 获取可用 AI 模型列表 |
+
+### 用户
+
+| 方法 | 端点 | 说明 |
+|------|------|------|
+| `GET` | `/api/user` | 获取当前用户信息 |
+| `PUT` | `/api/user` | 更新用户信息 |
+| `GET` | `/api/user/settings` | 获取用户设置 |
+| `PUT` | `/api/user/settings` | 更新用户设置 |
+
+</details>
+
+## 参与贡献
+
+欢迎贡献代码！请按照以下步骤：
+
+1. Fork 本仓库
+2. 创建功能分支：`git checkout -b feat/your-feature`
+3. 提交更改：`git commit -m 'feat: add your feature'`
+4. 推送分支：`git push origin feat/your-feature`
+5. 提交 Pull Request
+
+## 常见问题
+
+<details>
+<summary><b>AI 配置是如何工作的？</b></summary>
+
+JadeAI 不需要在服务端配置 AI API 密钥。每位用户在应用内的 **设置 > AI** 中自行配置 AI 供应商（OpenAI、Anthropic 或自定义端点）、API Key 和模型。API 密钥仅存储在浏览器的 localStorage 中，不会发送到服务端存储。
+
+</details>
+
+<details>
+<summary><b>可以在 SQLite 和 PostgreSQL 之间切换吗？</b></summary>
+
+可以。通过 `DB_TYPE` 环境变量设置为 `sqlite` 或 `postgresql`。SQLite 是默认选项，零配置即可使用。使用 PostgreSQL 时需额外设置 `DATABASE_URL`。注意：数据不会在两种数据库之间自动迁移。
+
+</details>
+
+<details>
+<summary><b>不使用 OAuth 时认证如何工作？</b></summary>
+
+当 `NEXT_PUBLIC_AUTH_ENABLED=false`（默认）时，JadeAI 使用 FingerprintJS 进行浏览器指纹识别。系统为每个浏览器生成唯一的指纹 ID 作为用户标识。无需登录界面 — 用户可以直接开始创建简历。
+
+</details>
+
+<details>
+<summary><b>PDF 导出是如何实现的？</b></summary>
+
+PDF 导出使用 Puppeteer Core + @sparticuz/chromium。50 套模板各有独立的服务端导出处理器，将简历渲染为高保真 PDF。同时支持 DOCX、HTML、TXT 和 JSON 格式导出。
+
+</details>
+
 ## 许可证
 
-MIT
+[Apache License 2.0](LICENSE)

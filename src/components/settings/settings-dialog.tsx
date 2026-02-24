@@ -222,7 +222,7 @@ export function SettingsDialog() {
             {/* Model — Combobox */}
             <div className="space-y-2">
               <Label>{t('ai.model')}</Label>
-              <Popover open={modelOpen} onOpenChange={setModelOpen}>
+              <Popover open={modelOpen} onOpenChange={setModelOpen} modal={false}>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
@@ -247,7 +247,7 @@ export function SettingsDialog() {
                   </div>
 
                   {/* Model list */}
-                  <div className="max-h-48 overflow-y-auto p-1">
+                  <div className="max-h-48 overflow-y-auto p-1" onWheel={(e) => e.stopPropagation()}>
                     {modelsFetching && (
                       <div className="flex items-center justify-center py-4 text-sm text-zinc-400">
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />

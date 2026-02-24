@@ -4,7 +4,13 @@
 
 **AI-Powered Smart Resume Builder**
 
-Build professional resumes with drag-and-drop editing, real-time AI optimization, 20 templates, and multi-format export.
+Build professional resumes with drag-and-drop editing, real-time AI optimization, 50 templates, and multi-format export.
+
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-61dafb)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6)](https://www.typescriptlang.org/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ed)](https://hub.docker.com/r/twwch/jadeai)
 
 [中文文档](./README.zh-CN.md)
 
@@ -44,7 +50,7 @@ Build professional resumes with drag-and-drop editing, real-time AI optimization
 
 - **Drag & Drop Editor** — Visually arrange and reorder resume sections and items
 - **Inline Editing** — Click any field to edit directly on the canvas
-- **20 Professional Templates** — Classic, Modern, Minimal, Creative, ATS-Friendly, Timeline, and more
+- **50 Professional Templates** — Classic, Modern, Minimal, Creative, ATS-Friendly, Timeline, Nordic, Swiss, and more
 - **Theme Customization** — Colors, fonts, spacing, and margins with live preview
 - **Undo / Redo** — Full edit history (up to 50 steps)
 - **Auto Save** — Configurable interval (0.3s–5s), with manual save option
@@ -58,6 +64,7 @@ Build professional resumes with drag-and-drop editing, real-time AI optimization
 - **Cover Letter Generation** — AI-tailored cover letter based on resume and JD, with tone selection (formal / friendly / confident)
 - **Grammar & Writing Check** — Detect weak verbs, vague descriptions, and grammar issues; returns a quality score
 - **Translation** — Translate resume content across 10 languages while preserving technical terms
+- **Flexible AI Provider** — Supports OpenAI, Anthropic, and custom API endpoints; each user configures their own key in-app
 
 ### Export & Sharing
 
@@ -89,7 +96,7 @@ Build professional resumes with drag-and-drop editing, real-time AI optimization
 | Database | Drizzle ORM (SQLite / PostgreSQL) |
 | Auth | NextAuth.js v5 + FingerprintJS |
 | AI | Vercel AI SDK v6 + OpenAI / Anthropic |
-| PDF | Puppeteer Core + Chromium |
+| PDF | Puppeteer Core + @sparticuz/chromium |
 | i18n | next-intl |
 | Validation | Zod v4 |
 
@@ -190,6 +197,21 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+## Environment Variables
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `AUTH_SECRET` | Yes | — | Secret key for session encryption |
+| `DB_TYPE` | No | `sqlite` | Database type: `sqlite` or `postgresql` |
+| `DATABASE_URL` | When PostgreSQL | — | PostgreSQL connection string |
+| `SQLITE_PATH` | No | `./data/jade.db` | SQLite database file path |
+| `NEXT_PUBLIC_AUTH_ENABLED` | No | `false` | Enable Google OAuth (`true`) or use fingerprint mode (`false`) |
+| `GOOGLE_CLIENT_ID` | When OAuth | — | Google OAuth client ID |
+| `GOOGLE_CLIENT_SECRET` | When OAuth | — | Google OAuth client secret |
+| `NEXT_PUBLIC_APP_NAME` | No | `JadeAI` | Application display name |
+| `NEXT_PUBLIC_APP_URL` | No | `http://localhost:3000` | Application URL |
+| `NEXT_PUBLIC_DEFAULT_LOCALE` | No | `zh` | Default language: `zh` or `en` |
+
 ## Scripts
 
 | Command | Description |
@@ -217,25 +239,157 @@ src/
 │   │   ├── templates/          # Template gallery
 │   │   └── share/[token]/      # Public shared resume viewer
 │   └── api/
-│       ├── ai/                 # AI endpoints (chat, generate, JD analysis, cover letter, grammar, translate)
+│       ├── ai/                 # AI endpoints
+│       │   ├── chat/           #   Streaming chat with tool calls
+│       │   ├── generate-resume/#   AI resume generation
+│       │   ├── jd-analysis/    #   JD match analysis
+│       │   ├── grammar-check/  #   Grammar & writing check
+│       │   ├── cover-letter/   #   Cover letter generation
+│       │   ├── translate/      #   Resume translation
+│       │   └── models/         #   List available AI models
 │       ├── resume/             # Resume CRUD, export, parse, share
+│       ├── share/              # Public share access
+│       ├── user/               # User profile & settings
 │       └── auth/               # NextAuth handlers
 ├── components/
 │   ├── ui/                     # shadcn/ui base components
 │   ├── editor/                 # Editor canvas, sections, fields, dialogs
 │   ├── ai/                     # AI chat panel & bubble
-│   ├── preview/templates/      # 20 resume templates
+│   ├── preview/templates/      # 50 resume templates
 │   ├── dashboard/              # Dashboard cards, grid, dialogs
 │   └── layout/                 # Header, theme provider, locale switcher
 ├── lib/
 │   ├── db/                     # Schema, repositories, migrations, adapters
 │   ├── auth/                   # Auth configuration
 │   └── ai/                     # AI prompts, tools, model config
-├── hooks/                      # Custom React hooks
+├── hooks/                      # Custom React hooks (7 hooks)
 ├── stores/                     # Zustand stores (resume, editor, settings, UI, tour)
 └── types/                      # TypeScript type definitions
 ```
 
+## Templates
+
+JadeAI includes **50 professionally designed resume templates** covering a wide range of styles and industries:
+
+<details>
+<summary>View all 50 templates</summary>
+
+| # | Template | # | Template | # | Template |
+|---|----------|---|----------|---|----------|
+| 1 | Classic | 18 | Clean | 35 | Material |
+| 2 | Modern | 19 | Bold | 36 | Medical |
+| 3 | Minimal | 20 | Timeline | 37 | Luxe |
+| 4 | Professional | 21 | Nordic | 38 | Retro |
+| 5 | Two-Column | 22 | Gradient | 39 | Card |
+| 6 | ATS | 23 | Magazine | 40 | Rose |
+| 7 | Academic | 24 | Corporate | 41 | Teacher |
+| 8 | Creative | 25 | Consultant | 42 | Coder |
+| 9 | Elegant | 26 | Swiss | 43 | Zigzag |
+| 10 | Executive | 27 | Metro | 44 | Neon |
+| 11 | Developer | 28 | Architect | 45 | Scientist |
+| 12 | Designer | 29 | Japanese | 46 | Blocks |
+| 13 | Startup | 30 | Artistic | 47 | Ribbon |
+| 14 | Formal | 31 | Sidebar | 48 | Engineer |
+| 15 | Infographic | 32 | Finance | 49 | Watercolor |
+| 16 | Compact | 33 | Berlin | 50 | Mosaic |
+| 17 | Euro | 34 | Legal | | |
+
+</details>
+
+## API Reference
+
+<details>
+<summary>View all API endpoints</summary>
+
+### Resume
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/resume` | List all resumes for current user |
+| `POST` | `/api/resume` | Create a new resume |
+| `GET` | `/api/resume/[id]` | Get resume detail with all sections |
+| `PUT` | `/api/resume/[id]` | Update resume metadata or sections |
+| `DELETE` | `/api/resume/[id]` | Delete a resume |
+| `POST` | `/api/resume/[id]/duplicate` | Duplicate a resume |
+| `GET` | `/api/resume/[id]/export` | Export resume (pdf, docx, html, txt, json) |
+| `POST` | `/api/resume/parse` | Parse resume from PDF or image upload |
+| `POST` | `/api/resume/[id]/share` | Create share link |
+| `GET` | `/api/resume/[id]/share` | Get share settings |
+| `DELETE` | `/api/resume/[id]/share` | Remove share link |
+
+### Share
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/share/[token]` | Access a publicly shared resume |
+
+### AI
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/ai/chat` | Stream chat messages with resume context |
+| `GET` | `/api/ai/chat/sessions` | List chat sessions for a resume |
+| `POST` | `/api/ai/chat/sessions` | Create a new chat session |
+| `GET` | `/api/ai/chat/sessions/[id]` | Get paginated messages for a session |
+| `DELETE` | `/api/ai/chat/sessions/[id]` | Delete a chat session |
+| `POST` | `/api/ai/generate-resume` | Generate resume from job title & experience |
+| `POST` | `/api/ai/jd-analysis` | Analyze resume against a job description |
+| `POST` | `/api/ai/grammar-check` | Check grammar and writing quality |
+| `POST` | `/api/ai/cover-letter` | Generate a tailored cover letter |
+| `POST` | `/api/ai/translate` | Translate resume content |
+| `GET` | `/api/ai/models` | List available AI models |
+
+### User
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/user` | Get current user profile |
+| `PUT` | `/api/user` | Update user profile |
+| `GET` | `/api/user/settings` | Get user settings |
+| `PUT` | `/api/user/settings` | Update user settings |
+
+</details>
+
+## Contributing
+
+Contributions are welcome! Here's how to get started:
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feat/your-feature`
+3. Commit your changes: `git commit -m 'feat: add your feature'`
+4. Push to the branch: `git push origin feat/your-feature`
+5. Open a Pull Request
+
+## FAQ
+
+<details>
+<summary><b>How does AI configuration work?</b></summary>
+
+JadeAI does not require server-side AI API keys. Each user configures their own AI provider (OpenAI, Anthropic, or custom endpoint), API key, and model in **Settings > AI** within the app. API keys are stored in the browser's local storage and are never sent to the server for storage.
+
+</details>
+
+<details>
+<summary><b>Can I switch between SQLite and PostgreSQL?</b></summary>
+
+Yes. Set the `DB_TYPE` environment variable to `sqlite` or `postgresql`. SQLite is the default and requires zero configuration. For PostgreSQL, also set `DATABASE_URL`. Note that data is not automatically migrated between database types.
+
+</details>
+
+<details>
+<summary><b>How does authentication work without OAuth?</b></summary>
+
+When `NEXT_PUBLIC_AUTH_ENABLED=false` (default), JadeAI uses browser fingerprinting via FingerprintJS. A unique fingerprint ID is generated for each browser and used as the user identifier. No login screen is shown — users can start building resumes immediately.
+
+</details>
+
+<details>
+<summary><b>How is PDF export implemented?</b></summary>
+
+PDF export uses Puppeteer Core with @sparticuz/chromium. Each of the 50 templates has a dedicated server-side export handler that renders the resume to high-fidelity PDF. DOCX, HTML, TXT, and JSON exports are also supported.
+
+</details>
+
 ## License
 
-MIT
+[Apache License 2.0](LICENSE)
