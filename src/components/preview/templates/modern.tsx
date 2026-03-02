@@ -141,6 +141,14 @@ function ModernSectionContent({ section }: { section: any }) {
           <div key={item.id} className="border-l-2 border-zinc-200 pl-4">
             <span className="text-sm font-medium text-zinc-700">{item.name || item.title || item.language}</span>
             {item.description && <p className="text-sm text-zinc-600">{item.description}</p>}
+            {item.technologies?.length > 0 && (
+              <p className="mt-0.5 text-xs text-zinc-400">Tech: {item.technologies.join(', ')}</p>
+            )}
+            {item.highlights?.length > 0 && (
+              <ul className="mt-1 list-disc pl-4">
+                {item.highlights.map((h: string, i: number) => <li key={i} className="text-sm text-zinc-600">{h}</li>)}
+              </ul>
+            )}
           </div>
         ))}
       </div>

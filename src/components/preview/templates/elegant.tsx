@@ -118,6 +118,14 @@ function ElegantSectionContent({ section }: { section: any }) {
           <div key={item.id}>
             <span className="text-sm font-medium" style={{ color: '#2c2c2c' }}>{item.name || item.title || item.language}</span>
             {item.description && <p className="text-sm text-zinc-600">{item.description}</p>}
+            {item.technologies?.length > 0 && (
+              <p className="mt-0.5 text-xs text-zinc-500">Tech: {item.technologies.join(', ')}</p>
+            )}
+            {item.highlights?.length > 0 && (
+              <ul className="mt-1 list-disc pl-5">
+                {item.highlights.map((h: string, i: number) => <li key={i} className="text-sm text-zinc-600">{h}</li>)}
+              </ul>
+            )}
           </div>
         ))}
       </div>

@@ -33,7 +33,12 @@ function buildInfographicSectionContent(section: Section, color: string, colorIn
     </div>`).join('')}</div>`;
   }
   if (c.items) {
-    return `<div class="space-y-2">${c.items.map((it: any) => `<div class="rounded-lg border border-zinc-100 p-3"><span class="text-sm font-medium text-zinc-800">${esc(it.name || it.title || it.language)}</span>${it.description ? `<p class="text-sm text-zinc-600">${esc(it.description)}</p>` : ''}</div>`).join('')}</div>`;
+    return `<div class="space-y-2">${c.items.map((it: any) => `<div class="rounded-lg border border-zinc-100 p-3">
+      <span class="text-sm font-medium text-zinc-800">${esc(it.name || it.title || it.language)}</span>
+      ${it.description ? `<p class="text-sm text-zinc-600">${esc(it.description)}</p>` : ''}
+      ${it.technologies?.length ? `<p class="mt-0.5 text-xs text-zinc-500">Tech: ${esc(it.technologies.join(', '))}</p>` : ''}
+      ${it.highlights?.length ? `<ul class="mt-1 list-disc pl-4">${buildHighlights(it.highlights, 'text-sm text-zinc-600')}</ul>` : ''}
+    </div>`).join('')}</div>`;
   }
   return '';
 }

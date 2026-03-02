@@ -38,6 +38,8 @@ function buildBoldSectionContent(s: Section): string {
     return `<div class="space-y-2">${c.items.map((it: any) => `<div>
       <span class="text-sm font-bold text-black">${esc(it.name || it.title || it.language)}</span>
       ${it.description ? `<p class="text-sm text-zinc-600">${esc(it.description)}</p>` : ''}
+      ${it.technologies?.length ? `<p class="mt-0.5 text-xs text-zinc-500">Tech: ${esc(it.technologies.join(', '))}</p>` : ''}
+      ${it.highlights?.length ? `<ul class="mt-1 list-disc pl-5">${it.highlights.map((h: string) => `<li class="text-sm text-zinc-600">${esc(h)}</li>`).join('')}</ul>` : ''}
     </div>`).join('')}</div>`;
   }
 
